@@ -9,7 +9,7 @@ import time
 from playwright.sync_api import sync_playwright
 import dingding
 import smms
-import dsjjson
+import common
 
 
 class PyPage:
@@ -59,7 +59,8 @@ class PyPage:
             self.app.logger.info("发送登录二维码")
             self.ding.dingding_robot(self.smmss.image_url)
             time.sleep(10)
-            self.app.config['url_hash_list'].append(self.smmss.hash)
+            # self.app.config['url_hash_list'].append(self.smmss.hash)
+            common.tool_list(self.smmss.hash, self.app.config['url_hash_list'])
             self.app.logger.info("结束二维码登录")
             self.isLogin = True
             # 登录成功
@@ -81,7 +82,7 @@ class PyPage:
         # 切换到7天的数据
         time.sleep(5)
         self.page.locator("div").filter(has_text=re.compile(r"^今天$")).nth(1).click()
-        max_dsj_tv_crash = dsjjson.json_handle(self.page, self.app)
+        max_dsj_tv_crash = common.json_handle(self.page, self.app)
         # 判断崩溃率是否大于0.65
         if float(max_dsj_tv_crash) > -1:
             # 截图
@@ -105,10 +106,10 @@ class PyPage:
                                           [dsj_tv_image_url, dsj_tv_bug_image_url])
             time.sleep(5)
             print(f"告警截图哈希值{dsj_tv_image_url_hash}")
-            self.app.config['url_hash_list'].append(dsj_tv_image_url_hash)
+            common.tool_list(dsj_tv_image_url_hash, self.app.config['url_hash_list'])
             time.sleep(1)
             print(f"top截图哈希值{dsj_tv_bug_image_url_hash}")
-            self.app.config['url_hash_list'].append(dsj_tv_bug_image_url_hash)
+            common.tool_list(dsj_tv_bug_image_url_hash, self.app.config['url_hash_list'])
         else:
             self.app.logger.info("tv端崩溃率小于0.65,不发送告警")
 
@@ -122,7 +123,7 @@ class PyPage:
         # 切换到7天的数据
         time.sleep(5)
         self.page.locator("div").filter(has_text=re.compile(r"^今天$")).nth(1).click()
-        max_dsj_android = dsjjson.json_handle(self.page, self.app)
+        max_dsj_android = common.json_handle(self.page, self.app)
         # 判断崩溃率是否大于0.65
         if float(max_dsj_android) > -1:
             # 截图
@@ -146,9 +147,12 @@ class PyPage:
             time.sleep(5)
             time.sleep(5)
             print(f"告警截图哈希值{dsj_android_image_url_hash}")
-            self.app.config['url_hash_list'].append(dsj_android_image_url_hash)
+            # self.app.config['url_hash_list'].append(dsj_android_image_url_hash)
+            common.tool_list(dsj_android_image_url_hash,self.app.config['url_hash_list'])
             time.sleep(1)
             print(f"top截图哈希值{dsj_android_bug_image_url_hash}")
-            self.app.config['url_hash_list'].append(dsj_android_bug_image_url_hash)
+            # self.app.config['url_hash_list'].append(dsj_android_bug_image_url_hash)
+            common.tool_list(dsj_android_bug_image_url_hash, self.app.config['url_hash_list'])
         else:
             self.app.logger.info("安卓崩溃率小于0.30,不发送告警")
+

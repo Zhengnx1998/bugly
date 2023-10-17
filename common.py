@@ -21,3 +21,8 @@ def json_handle(page, app):
     crash_max = max(crash_list)
     app.logger.info("7日内最大崩溃值是：%s", crash_max)
     return crash_max
+
+
+def tool_list(hash_url, hash_list):
+    if hash_url not in hash_list:
+        hash_list.append(hash_url)
