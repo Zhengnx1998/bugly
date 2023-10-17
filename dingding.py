@@ -9,10 +9,11 @@ import datetime
 
 import requests
 
-import app
-
 
 class DingDing:
+
+    def __init__(self,app):
+        self.app = app
 
     def dingding_robot(self, image_url):
         url = 'https://oapi.dingtalk.com/robot/send?access_token=42876cced0f0b2c96af38c1849abb98425733b5beb83a53a0180dc1d3482c0d2'
@@ -28,7 +29,7 @@ class DingDing:
         print(response.text)
 
     def dingding_robot_text(self, name, text, atMobiles, image_list):
-        # if int(datetime.datetime.now().strftime("%H")) % 3 == 0:
+        # if int(datetime.datetime.now().strftime("%H")) % 6 == 0:
             str_mobile = ""
             for mobile in atMobiles:
                 str_mobile = str_mobile + mobile
@@ -66,4 +67,4 @@ class DingDing:
             response = requests.post(url, json=json_data, headers=header)
             print(response.text)
         # else:
-        #     app.app.logger.info("每3小时发送一次钉钉告警")
+        #     self.app.logger.info("每3小时发送一次钉钉告警")
