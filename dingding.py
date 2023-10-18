@@ -26,14 +26,15 @@ class DingDing:
             "msgtype": "markdown"
         }
         response = requests.post(url, json=json_data, headers=header)
+        response.close()
         print(response.text)
 
     def dingding_robot_text(self, name, text, atMobiles, image_list):
-        # if int(datetime.datetime.now().strftime("%H")) % 6 == 0:
+        if int(datetime.datetime.now().strftime("%H")) % 6 == 0:
             str_mobile = ""
             for mobile in atMobiles:
                 str_mobile = str_mobile + mobile
-            url = 'https://oapi.dingtalk.com/robot/send?access_token=42876cced0f0b2c96af38c1849abb98425733b5beb83a53a0180dc1d3482c0d2'
+            url = 'https://oapi.dingtalk.com/robot/send?access_token=86b3c9aef59aeaf6b89678d8421bbd4a03dafb1a83698b25e6b80b0155800f07'
             header = {'Content-Type': 'application/json'}
             if len(image_list) == 1:
                 json_data = {
@@ -41,7 +42,7 @@ class DingDing:
                     "markdown": {
                         "title": "bugly崩溃告警",
                         "text": "### " + name + "" + text + "\n ![screenshot](" + image_list[0] + ")\n [buglyUrl链接](https://bugly.qq.com/v2/index)\n"
-                                                                                               " \n  <font color='#3C85C9'> " + str_mobile + " </font> "
+                                                                                               " \n  <font color=\'#3C85C9\'> " + str_mobile + " </font> "
                     }, "theme": "red",
                     "at": {
                         "atMobiles": atMobiles,
@@ -66,5 +67,6 @@ class DingDing:
                 }
             response = requests.post(url, json=json_data, headers=header)
             print(response.text)
-        # else:
-        #     self.app.logger.info("每3小时发送一次钉钉告警")
+            response.close()
+        else:
+            self.app.logger.info("每6小时发送一次钉钉告警，还没到时间")

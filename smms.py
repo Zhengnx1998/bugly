@@ -25,6 +25,7 @@ class Smms:
         response = requests.post(self.url + '/token', params=data_json)
         print("Token返回值：", response.json()["data"]["token"])
         self.token = response.json()["data"]["token"]
+        response.close()
 
     def upload_image(self, file_path):
         header = {'Authorization': self.token}

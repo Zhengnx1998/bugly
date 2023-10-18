@@ -30,7 +30,7 @@ def hello_world():  # put application's code here
     return 'Hello World!'
 
 
-@scheduler.task('cron', id='bugly', minute='*/2', max_instances=1, next_run_time=datetime.datetime.now())
+@scheduler.task('cron', id='bugly', minute='*/10', max_instances=1, next_run_time=datetime.datetime.now())
 @app.route('/login', methods=['GET', 'POST'])
 def bugly_login():
     app.config['py_page'].login_by()

@@ -80,12 +80,13 @@ class PyPage:
         if self.page.get_by_label("Close", exact=True).count() > 0:
             self.page.get_by_label("Close", exact=True).click()
         # 切换到7天的数据
-        time.sleep(5)
+        max_dsj_tv_crash = common.json_handle(self.page, self.app, "电视家3_0")
         self.page.locator("div").filter(has_text=re.compile(r"^今天$")).nth(1).click()
-        max_dsj_tv_crash = common.json_handle(self.page, self.app)
+        self.page.get_by_text("最近7天").click()
         # 判断崩溃率是否大于0.65
-        if float(max_dsj_tv_crash) > -1:
+        if float(max_dsj_tv_crash) > 0.65:
             # 截图
+            time.sleep(5)
             dsj_tv_image = self.page.locator(
                 "xpath=//*[@class=\"_3QsyGr2hqAZjVh6fZnzI6t _3wcN4SQOWbN86r7emNH6FU _1PKKo_a_rrd5QsVWTXa1ax\"]").first
             dsj_tv_image.screenshot(path='./image/dsj_tv_image.png')
@@ -101,8 +102,8 @@ class PyPage:
             self.smmss.upload_image('./image/dsj_tv_bug_image.png')
             dsj_tv_bug_image_url = self.smmss.image_url
             dsj_tv_bug_image_url_hash = self.smmss.hash
-            self.ding.dingding_robot_text("电视家_3.07天内最高崩溃率为:", str(max_dsj_tv_crash),
-                                          ["@15680059975", "@18791082880"],
+            self.ding.dingding_robot_text("电视家TV端近6小时最高崩溃率为:%s %", str(max_dsj_tv_crash),
+                                          ["@18780106625", "@15360584721", "@18380473531"],
                                           [dsj_tv_image_url, dsj_tv_bug_image_url])
             time.sleep(5)
             print(f"告警截图哈希值{dsj_tv_image_url_hash}")
@@ -120,13 +121,14 @@ class PyPage:
         # 判断x元素是否存在
         if self.page.get_by_label("Close", exact=True).count() > 0:
             self.page.get_by_label("Close", exact=True).click()
-        # 切换到7天的数据
+        max_dsj_android = common.json_handle(self.page, self.app, "电视家随身版")
         time.sleep(5)
         self.page.locator("div").filter(has_text=re.compile(r"^今天$")).nth(1).click()
-        max_dsj_android = common.json_handle(self.page, self.app)
-        # 判断崩溃率是否大于0.65
-        if float(max_dsj_android) > -1:
-            # 截图
+        self.page.get_by_text("最近7天").click()
+        # 判断崩溃率是否大于0.30
+        if float(max_dsj_android) > 0.30:
+            # 切换到7天的数据截图
+            time.sleep(5)
             dsj_android_image = self.page.locator(
                 "xpath=//*[@class=\"_3QsyGr2hqAZjVh6fZnzI6t _3wcN4SQOWbN86r7emNH6FU _1PKKo_a_rrd5QsVWTXa1ax\"]").first
             dsj_android_image.screenshot(path='./image/dsj_android_image.png')
@@ -142,17 +144,16 @@ class PyPage:
             self.smmss.upload_image('./image/dsj_android_bug_image.png')
             dsj_android_bug_image_url = self.smmss.image_url
             dsj_android_bug_image_url_hash = self.smmss.hash
-            self.ding.dingding_robot_text("电视家_Android崩溃率为:", str(max_dsj_android), ["@18791082880"],
+            self.ding.dingding_robot_text("电视家安卓近6小时内崩溃率最高为:%s %", str(max_dsj_android), ["@18780106625"],
                                           [dsj_android_image_url, dsj_android_bug_image_url])
             time.sleep(5)
             time.sleep(5)
             print(f"告警截图哈希值{dsj_android_image_url_hash}")
             # self.app.config['url_hash_list'].append(dsj_android_image_url_hash)
-            common.tool_list(dsj_android_image_url_hash,self.app.config['url_hash_list'])
+            common.tool_list(dsj_android_image_url_hash, self.app.config['url_hash_list'])
             time.sleep(1)
             print(f"top截图哈希值{dsj_android_bug_image_url_hash}")
             # self.app.config['url_hash_list'].append(dsj_android_bug_image_url_hash)
             common.tool_list(dsj_android_bug_image_url_hash, self.app.config['url_hash_list'])
         else:
             self.app.logger.info("安卓崩溃率小于0.30,不发送告警")
-
