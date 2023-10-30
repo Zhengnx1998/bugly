@@ -29,7 +29,7 @@ class DingDing:
         print(response.text)
 
     def dingding_robot_text(self, name, text, atMobiles, image_list):
-        # if int(datetime.datetime.now().strftime("%H")) % 6 == 0:
+        if int(datetime.datetime.now().strftime("%H")) % 6 == 0:
             str_mobile = ""
             for mobile in atMobiles:
                 str_mobile = str_mobile + mobile
@@ -67,5 +67,5 @@ class DingDing:
             response = requests.post(url, json=json_data, headers=header)
             print(response.text)
             response.close()
-        # else:
-        #     self.app.logger.info("每6小时发送一次钉钉告警，还没到时间")
+        else:
+            self.app.logger.info("每6小时发送一次钉钉告警，还没到时间")
