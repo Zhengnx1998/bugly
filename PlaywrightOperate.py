@@ -6,10 +6,12 @@
 # @Project : bugly_test
 import re
 import time
+
 from playwright.sync_api import sync_playwright
+
+import common
 import dingding
 import smms
-import common
 
 
 class PyPage:
@@ -84,7 +86,7 @@ class PyPage:
         self.page.locator("div").filter(has_text=re.compile(r"^今天$")).nth(1).click()
         self.page.get_by_text("最近7天").click()
         # 判断崩溃率是否大于0.65
-        if float(max_dsj_tv_crash) > 0.65:
+        if float(max_dsj_tv_crash) > 0.35:
             # 截图
             time.sleep(5)
             dsj_tv_image = self.page.locator(
@@ -102,8 +104,9 @@ class PyPage:
             self.smmss.upload_image('./image/dsj_tv_bug_image.png')
             dsj_tv_bug_image_url = self.smmss.image_url
             dsj_tv_bug_image_url_hash = self.smmss.hash
-            self.ding.dingding_robot_text("电视家TV端近6小时最高崩溃率为:%s %", str(max_dsj_tv_crash),
-                                          ["@18780106625", "@15360584721", "@18380473531"],
+            self.ding.dingding_robot_text("电视家TV端近6小时最高崩溃率为:", str(max_dsj_tv_crash),
+                                          ["@18780106625", "@13618035171", "@18380473531", "@19138982495",
+                                           "@15360584721"],
                                           [dsj_tv_image_url, dsj_tv_bug_image_url])
             time.sleep(5)
             print(f"告警截图哈希值{dsj_tv_image_url_hash}")
@@ -126,7 +129,7 @@ class PyPage:
         self.page.locator("div").filter(has_text=re.compile(r"^今天$")).nth(1).click()
         self.page.get_by_text("最近7天").click()
         # 判断崩溃率是否大于0.30
-        if float(max_dsj_android) > 0.30:
+        if float(max_dsj_android) > 0.10:
             # 切换到7天的数据截图
             time.sleep(5)
             dsj_android_image = self.page.locator(
@@ -144,7 +147,8 @@ class PyPage:
             self.smmss.upload_image('./image/dsj_android_bug_image.png')
             dsj_android_bug_image_url = self.smmss.image_url
             dsj_android_bug_image_url_hash = self.smmss.hash
-            self.ding.dingding_robot_text("电视家安卓近6小时内崩溃率最高为:%s %", str(max_dsj_android), ["@18780106625"],
+            self.ding.dingding_robot_text("电视家安卓近6小时内崩溃率最高为:", str(max_dsj_android),
+                                          ["@18780106625", "@15680059975", "@18502828246", "@15669027751"],
                                           [dsj_android_image_url, dsj_android_bug_image_url])
             time.sleep(5)
             time.sleep(5)

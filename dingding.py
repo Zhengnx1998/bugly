@@ -4,7 +4,6 @@
 # @Email : znx_969@163.com
 # @File : test.py
 # @Project : bugly_test
-import time
 import datetime
 
 import requests
@@ -12,7 +11,7 @@ import requests
 
 class DingDing:
 
-    def __init__(self,app):
+    def __init__(self, app):
         self.app = app
 
     def dingding_robot(self, image_url):
@@ -30,19 +29,19 @@ class DingDing:
         print(response.text)
 
     def dingding_robot_text(self, name, text, atMobiles, image_list):
-        if int(datetime.datetime.now().strftime("%H")) % 6 == 0:
+        # if int(datetime.datetime.now().strftime("%H")) % 6 == 0:
             str_mobile = ""
             for mobile in atMobiles:
                 str_mobile = str_mobile + mobile
-            url = 'https://oapi.dingtalk.com/robot/send?access_token=86b3c9aef59aeaf6b89678d8421bbd4a03dafb1a83698b25e6b80b0155800f07'
+            url = 'https://oapi.dingtalk.com/robot/send?access_token=4307e5193748f1b0bc94b08940bab73c5b5d48faa3b8c51ecd8719b3d9e6995e'
             header = {'Content-Type': 'application/json'}
             if len(image_list) == 1:
                 json_data = {
                     "msgtype": "markdown",
                     "markdown": {
                         "title": "bugly崩溃告警",
-                        "text": "### " + name + "" + text + "\n ![screenshot](" + image_list[0] + ")\n [buglyUrl链接](https://bugly.qq.com/v2/index)\n"
-                                                                                               " \n  <font color=\'#3C85C9\'> " + str_mobile + " </font> "
+                        "text": "### " + name + "" + text + "\n ![screenshot](" + image_list[0] + ")\n [buglyUrl链接](https://bugly.qq.com/v2/workbench/apps)\n"
+                                 " \n  <font color=\'#3C85C9\'> " + str_mobile + " </font> "
                     }, "theme": "red",
                     "at": {
                         "atMobiles": atMobiles,
@@ -68,5 +67,5 @@ class DingDing:
             response = requests.post(url, json=json_data, headers=header)
             print(response.text)
             response.close()
-        else:
-            self.app.logger.info("每6小时发送一次钉钉告警，还没到时间")
+        # else:
+        #     self.app.logger.info("每6小时发送一次钉钉告警，还没到时间")

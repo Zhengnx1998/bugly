@@ -20,7 +20,7 @@ def make_dir(make_dir_path):
 
 def getLogHandler():
     # 日志地址
-    log_dir_name = "./bulgly_test/log/"
+    log_dir_name = "./bugly/log/"
     # 文件名，以日期作为文件名
     log_file_name = 'logger-' + time.strftime('%Y-%m-%d', time.localtime(time.time())) + '.log'
     # 创建日志文件
