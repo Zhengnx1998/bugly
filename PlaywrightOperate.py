@@ -7,13 +7,13 @@
 import datetime
 import os.path
 import re
+import time
 
 from playwright.sync_api import sync_playwright
 
 import common
 import dingding
 import smms
-import time
 
 
 class PyPage:
@@ -39,7 +39,8 @@ class PyPage:
         with sync_playwright() as self.playwright:
             self.browser = self.playwright.chromium.launch(headless=True)
             if os.path.exists("state.json"):
-                self.context = self.browser.new_context(storage_state="state.json")
+                self.context = self.browser.new_context(storage_state="state.json",
+                                                        viewport={'width': 2560, 'height': 1660})
             else:
                 self.context = self.browser.new_context(
                     viewport={'width': 2560, 'height': 1660}
@@ -125,7 +126,7 @@ class PyPage:
             print(f"top截图哈希值{dsj_tv_bug_image_url_hash}")
             common.tool_list(dsj_tv_bug_image_url_hash, self.app.config['url_hash_list'])
         else:
-            self.app.logger.info("tv端崩溃率小于0.65,不发送告警")
+            self.app.logger.info("tv端崩溃率小于0.65,且没有到6点不发送告警")
 
     # 安卓业务
     def select_android(self):
@@ -171,4 +172,4 @@ class PyPage:
             # self.app.config['url_hash_list'].append(dsj_android_bug_image_url_hash)
             common.tool_list(dsj_android_bug_image_url_hash, self.app.config['url_hash_list'])
         else:
-            self.app.logger.info("安卓崩溃率小于0.30,不发送告警")
+            self.app.logger.info("安卓崩溃率小于0.30,且没有到6点，不发送告警")
