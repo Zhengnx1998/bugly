@@ -96,7 +96,7 @@ class PyPage:
         self.page.locator("div").filter(has_text=re.compile(r"^今天$")).nth(1).click()
         self.page.get_by_text("最近7天").click()
         # 判断崩溃率是否大于0.65或者当前时间=18点0几分
-        if datetime.datetime.now().hour == 18 and datetime.datetime.now().minute // 10 == 0 or float(
+        if (datetime.datetime.now().hour == 18 and datetime.datetime.now().minute // 10 == 0) or float(
                 max_dsj_tv_crash) > 0.65:
             # 截图
             time.sleep(5)
@@ -140,7 +140,7 @@ class PyPage:
         self.page.locator("div").filter(has_text=re.compile(r"^今天$")).nth(1).click()
         self.page.get_by_text("最近7天").click()
         # 判断崩溃率是否大于0.30或者当前时间=18点0几分
-        if datetime.datetime.now().hour == 18 and datetime.datetime.now().minute // 10 == 0 or float(
+        if (datetime.datetime.now().hour == 18 and datetime.datetime.now().minute // 10 == 0) or float(
                 max_dsj_android) > 0.30:
             # 切换到7天的数据截图
             time.sleep(5)
