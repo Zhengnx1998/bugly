@@ -29,7 +29,8 @@ class DingDing:
         print(response.text)
 
     def dingding_robot_text(self, name, text, atMobiles, image_list):
-        if int(datetime.datetime.now().strftime("%H")) % 6 == 0:
+        if datetime.datetime.now().hour == 18 and datetime.datetime.now().minute // 10 == 0 or int(
+                datetime.datetime.now().strftime("%H")) % 6 == 0:
             str_mobile = ""
             for mobile in atMobiles:
                 str_mobile = str_mobile + mobile
@@ -40,7 +41,8 @@ class DingDing:
                     "msgtype": "markdown",
                     "markdown": {
                         "title": "bugly崩溃告警",
-                        "text": "### " + name + "" + text + "\n ![screenshot](" + image_list[0] + ")\n [buglyUrl链接](https://bugly.qq.com/v2/workbench/apps)\n"
+                        "text": "### " + name + "" + text + "\n ![screenshot](" + image_list[
+                            0] + ")\n [buglyUrl链接](https://bugly.qq.com/v2/workbench/apps)\n"
                                  " \n  <font color=\'#3C85C9\'> " + str_mobile + " </font> "
                     }, "theme": "red",
                     "at": {

@@ -4,14 +4,16 @@
 # @Email : znx_969@163.com
 # @File : test.py
 # @Project : bugly_test
+import datetime
+import os.path
 import re
-import time
 
 from playwright.sync_api import sync_playwright
 
 import common
 import dingding
 import smms
+import time
 
 
 class PyPage:
@@ -32,48 +34,55 @@ class PyPage:
             for hash_list in self.app.config['url_hash_list']:
                 self.smmss.delete_image_url(hash_list)
             self.app.config['url_hash_list'] = []
-        if self.isOpenBrowser is False:
-            self.playwright = sync_playwright().start()
+        # if self.isOpenBrowser is False:
+        # self.playwright = sync_playwright().start()
+        with sync_playwright() as self.playwright:
             self.browser = self.playwright.chromium.launch(headless=True)
-            self.context = self.browser.new_context(
-                viewport={'width': 2560, 'height': 1660}
-            )
+            if os.path.exists("state.json"):
+                self.context = self.browser.new_context(storage_state="state.json")
+            else:
+                self.context = self.browser.new_context(
+                    viewport={'width': 2560, 'height': 1660}
+                )
             page = self.context.new_page()
             self.page = page
             self.isOpenBrowser = True
-        self.page.goto("https://bugly.qq.com/v2/workbench/apps")
-        time.sleep(5)
-        print("产品列表:", self.page.get_by_text("产品列表").count())
-        if self.page.get_by_text("产品列表").count() == 0:
-            self.app.logger.info("未登录，执行登录二维码操作")
-            qr = self.page.frame_locator("iframe[name=\"ptlogin_iframe\"]").locator("#qr_area").locator("#qrlogin_img")
-            el_attrs = qr.evaluate("el => el.getAttributeNames()")
-            for attr in el_attrs:
-                print("属性：", attr, ":", qr.get_attribute(attr))
-            while True:
-                if qr.get_attribute("src") is not None:
-                    break
-            time.sleep(2)
-            self.app.logger.info("上传登录二维码")
-            qr.screenshot(path='./image/qr.png')
-            self.smmss.get_token()
-            self.smmss.upload_image('./image/qr.png')
-            self.app.logger.info("发送登录二维码")
-            self.ding.dingding_robot(self.smmss.image_url)
-            time.sleep(10)
-            # self.app.config['url_hash_list'].append(self.smmss.hash)
-            common.tool_list(self.smmss.hash, self.app.config['url_hash_list'])
-            self.app.logger.info("结束二维码登录")
-            self.isLogin = True
-            # 登录成功
-        if self.isLogin:
-            self.app.logger.info("执行电视家业务动作")
-            self.select_dsj_tv()
+            self.page.goto("https://bugly.qq.com/v2/workbench/apps")
             time.sleep(5)
-            self.app.logger.info("执行安卓业务动作")
-            self.select_android()
-        else:
-            self.app.logger.info("未登录不执行")
+            print("产品列表:", self.page.get_by_text("产品列表").count())
+            if self.page.get_by_text("产品列表").count() == 0:
+                self.app.logger.info("未登录，执行登录二维码操作")
+                qr = self.page.frame_locator("iframe[name=\"ptlogin_iframe\"]").locator("#qr_area").locator(
+                    "#qrlogin_img")
+                el_attrs = qr.evaluate("el => el.getAttributeNames()")
+                for attr in el_attrs:
+                    print("属性：", attr, ":", qr.get_attribute(attr))
+                while True:
+                    if qr.get_attribute("src") is not None:
+                        break
+                time.sleep(2)
+                self.app.logger.info("上传登录二维码")
+                qr.screenshot(path='./image/qr.png')
+                self.smmss.get_token()
+                self.smmss.upload_image('./image/qr.png')
+                self.app.logger.info("发送登录二维码")
+                self.ding.dingding_robot(self.smmss.image_url)
+                time.sleep(10)
+                # self.app.config['url_hash_list'].append(self.smmss.hash)
+                common.tool_list(self.smmss.hash, self.app.config['url_hash_list'])
+                self.app.logger.info("结束二维码登录")
+                self.isLogin = True
+                # 登录成功
+            if self.isLogin:
+                self.app.logger.info("执行电视家业务动作")
+                self.select_dsj_tv()
+                self.context.storage_state(path="state.json")
+                time.sleep(5)
+                self.app.logger.info("执行安卓业务动作")
+                self.select_android()
+                self.context.storage_state(path="state.json")
+            else:
+                self.app.logger.info("未登录不执行")
 
     # 电视家3.0
     def select_dsj_tv(self):
@@ -85,8 +94,9 @@ class PyPage:
         max_dsj_tv_crash = common.json_handle(self.page, self.app, "电视家3_0")
         self.page.locator("div").filter(has_text=re.compile(r"^今天$")).nth(1).click()
         self.page.get_by_text("最近7天").click()
-        # 判断崩溃率是否大于0.65
-        if float(max_dsj_tv_crash) > 0.65:
+        # 判断崩溃率是否大于0.65或者当前时间=18点0几分
+        if datetime.datetime.now().hour == 18 and datetime.datetime.now().minute // 10 == 0 or float(
+                max_dsj_tv_crash) > 0.65:
             # 截图
             time.sleep(5)
             dsj_tv_image = self.page.locator(
@@ -128,8 +138,9 @@ class PyPage:
         time.sleep(5)
         self.page.locator("div").filter(has_text=re.compile(r"^今天$")).nth(1).click()
         self.page.get_by_text("最近7天").click()
-        # 判断崩溃率是否大于0.30
-        if float(max_dsj_android) > 0.30:
+        # 判断崩溃率是否大于0.30或者当前时间=18点0几分
+        if datetime.datetime.now().hour == 18 and datetime.datetime.now().minute // 10 == 0 or float(
+                max_dsj_android) > 0.30:
             # 切换到7天的数据截图
             time.sleep(5)
             dsj_android_image = self.page.locator(
