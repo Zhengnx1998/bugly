@@ -24,7 +24,7 @@ class PyPage:
         self.context = None
         self.browser = None
         self.page = None
-        self.isLogin = False
+        self.isLogin = True
         self.smmss = smms.Smms(app)
         self.ding = dingding.DingDing(app)
         self.app = app
@@ -40,10 +40,10 @@ class PyPage:
             self.browser = self.playwright.chromium.launch(headless=True)
             if os.path.exists("state.json"):
                 self.context = self.browser.new_context(storage_state="state.json",
-                                                        viewport={'width': 2560, 'height': 1660})
+                                                        viewport={'width': 2560, 'height': 1660}, locale="zh_CN.utf8")
             else:
                 self.context = self.browser.new_context(
-                    viewport={'width': 2560, 'height': 1660}
+                    viewport={'width': 2560, 'height': 1660}, locale="zh_CN.utf8"
                 )
             page = self.context.new_page()
             self.page = page
