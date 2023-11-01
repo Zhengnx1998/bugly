@@ -27,7 +27,7 @@ def json_handle(page, app, product):
             crash_list.append(format(crash * 100, ".2f"))
     print("当天的数据为：", crash_list)
     if len(crash_list) < 6:
-        return
+        return 0
     else:
         crash_list_six = crash_list[-6:]
         print("最近6小时的数据为", crash_list_six)
