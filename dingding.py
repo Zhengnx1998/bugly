@@ -29,8 +29,8 @@ class DingDing:
         print(response.text)
 
     def dingding_robot_text(self, name, text, atMobiles, image_list):
-        if (datetime.datetime.now().hour == 18 and datetime.datetime.now().minute // 10 == 0) or int(
-                datetime.datetime.now().strftime("%H")) % 6 == 0:
+        if (datetime.datetime.now().hour == 18 and datetime.datetime.now().minute // 10 == 0) or (int(
+                datetime.datetime.now().strftime("%H")) % 6 == 0 and datetime.datetime.now().minute // 10 == 0):
             str_mobile = ""
             for mobile in atMobiles:
                 str_mobile = str_mobile + mobile
