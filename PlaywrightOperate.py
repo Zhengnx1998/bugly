@@ -43,6 +43,7 @@ class PyPage:
             time.sleep(5)
             print("产品列表:", self.page.get_by_text("产品列表").count())
             if self.page.get_by_text("产品列表").count() == 0:
+                time.sleep(15)
                 self.app.logger.info("未登录，执行登录二维码操作")
                 qr = self.page.frame_locator("iframe[name=\"ptlogin_iframe\"]").locator("#qr_area").locator(
                     "#qrlogin_img")
@@ -64,10 +65,20 @@ class PyPage:
                 now_product_name = None
                 self.app.logger.info("执行电视家业务动作")
                 now_product_name = common.select_product(self.page, self.app, self.ding, "电视家3_0", now_product_name,
-                                                         0.65)
+                                                         0.01)
+                print(now_product_name)
                 self.app.logger.info("执行安卓业务动作")
-                common.select_product(self.page, self.app, self.ding, "电视家随身版", now_product_name,
-                                      0.30)
+                now_product_name = common.select_product(self.page, self.app, self.ding, "电视家随身版",now_product_name,
+                                                         0.01)
+                print(now_product_name)
+                self.app.logger.info("执行ios业务动作")
+                now_product_name = common.select_product(self.page, self.app, self.ding, "电视家_iOS", now_product_name,
+                                                         0.01)
+                print(now_product_name)
+                self.app.logger.info("执行火星业务动作")
+                common.select_product(self.page, self.app, self.ding, "Tvmars", now_product_name,
+                                      0.01)
+                print(now_product_name)
                 self.context.storage_state(path="state.json")
             else:
                 self.app.logger.info("未登录不执行")

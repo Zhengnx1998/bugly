@@ -29,12 +29,12 @@ class DingDing:
         print(response.text)
 
     def dingding_robot_text(self, name, text, atMobiles, image_list):
-        if (datetime.datetime.now().hour == 18 and datetime.datetime.now().minute // 10 == 0) or (int(
-                datetime.datetime.now().strftime("%H")) % 6 == 0 and datetime.datetime.now().minute // 10 == 0):
+        # if (datetime.datetime.now().hour == 18 and datetime.datetime.now().minute // 10 == 0) or (int(
+        #         datetime.datetime.now().strftime("%H")) % 6 == 0 and datetime.datetime.now().minute // 10 == 0):
             str_mobile = ""
             for mobile in atMobiles:
                 str_mobile = str_mobile + mobile
-            url = 'https://oapi.dingtalk.com/robot/send?access_token=4307e5193748f1b0bc94b08940bab73c5b5d48faa3b8c51ecd8719b3d9e6995e'
+            url = 'https://oapi.dingtalk.com/robot/send?access_token=42876cced0f0b2c96af38c1849abb98425733b5beb83a53a0180dc1d3482c0d2'
             header = {'Content-Type': 'application/json'}
             if len(image_list) == 1:
                 json_data = {
@@ -69,5 +69,5 @@ class DingDing:
             response = requests.post(url, json=json_data, headers=header)
             print(response.text)
             response.close()
-        else:
-            self.app.logger.info("每6小时发送一次钉钉告警，还没到时间")
+        # else:
+        #     self.app.logger.info("每6小时发送一次钉钉告警，还没到时间")
