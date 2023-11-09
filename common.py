@@ -4,10 +4,11 @@
 # @Email : znx_969@163.com
 # @File : test.py
 # @Project : bugly_test
-import datetime
 import json
+import os
 import re
 import time
+from datetime import datetime
 
 url = "http://47.93.62.235/buglyImage/"
 path_url = "/www/wwwroot/47.93.62.235/buglyImage/"
@@ -22,6 +23,7 @@ tel_dict = {"电视家3_0": ["@18780106625", "@13618035171", "@18380473531", "@1
             "电视家_iOS": ["@18791082880"],
             "Tvmars": ["@18791082880"]
             }
+json_dict = {"电视家3_0": 0, "电视家随身版": 0, "电视家_iOS": 0, "Tvmars": 0}
 
 
 def json_handle(page, app, product):
@@ -54,6 +56,33 @@ def json_handle(page, app, product):
         return crash_max
 
 
+# 检查每天发送次数
+def check_count(product_name):
+    # 初始化文件
+    if os.path.exists("count.json") is False:
+        file_count = open("count.json", 'w')
+        file_count.write(json.dumps(json_dict))
+        file_count.close()
+    with open("count.json", 'r') as file:
+        content = file.read()
+    if content is None:
+        filew = open("count.json", 'w')
+        filew.write(json.dumps(json_dict))
+        filew.close()
+        content_json = json_dict
+    else:
+        content_json = json.loads(content)
+    count = content_json[product_name]
+    if count == 2:
+        return True
+    else:
+        new_count = count + 1
+        content_json[product_name] = new_count
+    with open("count.json", 'w') as file:
+        file.write(json.dumps(content_json))
+        return False
+
+
 # 查询产品线
 def select_product(page, app, ding, product_name, now_product_name, threshold):
     if now_product_name is not None:
@@ -80,11 +109,16 @@ def select_product(page, app, ding, product_name, now_product_name, threshold):
         app.logger.info("开始截图top问题的数据,当前产品为：%s", product_name)
         top_bug_image = page.locator("xpath=/html/body/div/div/div/div[2]/div/div[2]/div[3]")
         top_bug_image.screenshot(path=path_url + product_dict.get(product_name)[1])
-
-        ding.dingding_robot_text(product_dict.get(product_name)[2], str(max_dsj), tel_dict.get(product_name),
-                                 [url + product_dict.get(product_name)[0],
-                                  url + product_dict.get(product_name)[1]])
-    elif (datetime.datetime.now().hour == 18 and datetime.datetime.now().minute // 10 == 0):
+        # 发送钉钉
+        if check_count(product_name) is False:
+            app.logger.info("当天%s达到告警阈值且发送次数没有达到10", product_name)
+            ding.dingding_robot_text(product_dict.get(product_name)[2], str(max_dsj), tel_dict.get(product_name),
+                                     [url + product_dict.get(product_name)[0] + "?" + str(datetime.now().timestamp()),
+                                      url + product_dict.get(product_name)[1] + "?" + str(datetime.now().timestamp())])
+        else:
+            app.logger.info("当天该产品%s已发送次数达到10", product_name)
+        # 判断是否当天发送次数达到10
+    elif (datetime.now().hour == 18 and datetime.now().minute // 10 == 5):
         # 切换到7天的数据截图
         time.sleep(5)
         app.logger.info("开始截图7天的数据,当前产品线为：%s", product_name)

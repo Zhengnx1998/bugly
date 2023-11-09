@@ -12,6 +12,8 @@ from playwright.sync_api import sync_playwright
 
 import common
 import dingding
+from datetime import datetime
+import json
 
 
 class PyPage:
@@ -25,6 +27,16 @@ class PyPage:
         self.isLogin = True
         self.ding = dingding.DingDing(app)
         self.app = app
+        self.init_count()
+
+    def init_count(self):
+        if datetime.now().hour == 1 and datetime.now().minute // 10 == 0:
+            file_count = open("count.json", 'w')
+            file_count.write(json.dumps(common.json_dict))
+            file_count.close()
+            self.app.logger.info("初始化产品预警次数")
+        else:
+            pass
 
     def login_by(self) -> None:
         with sync_playwright() as self.playwright:
@@ -57,7 +69,7 @@ class PyPage:
                 self.app.logger.info("上传登录二维码")
                 qr.screenshot(path='/www/wwwroot/47.93.62.235/buglyImage/qr.png')
                 self.app.logger.info("发送登录二维码")
-                self.ding.dingding_robot("http://47.93.62.235/buglyImage/qr.png")
+                self.ding.dingding_robot("http://47.93.62.235/buglyImage/qr.png"+str(datetime.now().timestamp()))
                 self.app.logger.info("结束二维码登录")
                 self.isLogin = True
                 # 登录成功
