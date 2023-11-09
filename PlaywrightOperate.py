@@ -66,19 +66,22 @@ class PyPage:
                 self.app.logger.info("执行电视家业务动作")
                 now_product_name = common.select_product(self.page, self.app, self.ding, "电视家3_0", now_product_name,
                                                          0.01)
-                print(now_product_name)
+                print("now_product_name",now_product_name)
+                time.sleep(5)
                 self.app.logger.info("执行安卓业务动作")
                 now_product_name = common.select_product(self.page, self.app, self.ding, "电视家随身版",now_product_name,
                                                          0.01)
-                print(now_product_name)
+                print("now_product_name",now_product_name)
+                time.sleep(5)
                 self.app.logger.info("执行ios业务动作")
                 now_product_name = common.select_product(self.page, self.app, self.ding, "电视家_iOS", now_product_name,
                                                          0.01)
-                print(now_product_name)
+                print("now_product_name",now_product_name)
+                time.sleep(5)
                 self.app.logger.info("执行火星业务动作")
                 common.select_product(self.page, self.app, self.ding, "Tvmars", now_product_name,
                                       0.01)
-                print(now_product_name)
+                print("now_product_name",now_product_name)
                 self.context.storage_state(path="state.json")
             else:
                 self.app.logger.info("未登录不执行")

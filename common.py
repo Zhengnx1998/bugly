@@ -4,6 +4,7 @@
 # @Email : znx_969@163.com
 # @File : test.py
 # @Project : bugly_test
+import datetime
 import json
 import re
 import time
@@ -24,12 +25,11 @@ tel_dict = {"电视家3_0": ["@18780106625", "@13618035171", "@18380473531", "@1
 
 
 def json_handle(page, app, product):
-    page.locator("span").filter(has_text="累计").locator("label").click()
-    time.sleep(5)
+    page.get_by_text(product).click()
+    page.get_by_text(product).nth(1).click()
     # 拦截get-crash-trend接口
-    with page.expect_response("*get-app-real-time-trend*", timeout=30000) as response_info:
-        page.get_by_text(product).click()
-        page.get_by_text(product).nth(1).click()
+    with page.expect_response("*get-app-real-time-trend*dataType=realTimeTrendData*", timeout=30000) as response_info:
+        page.locator("span").filter(has_text="累计").locator("label").click()
         print("点击结束")
     response = response_info.value
     print(response.text())
@@ -71,15 +71,33 @@ def select_product(page, app, ding, product_name, now_product_name, threshold):
     if float(max_dsj) > threshold:
         # 切换到7天的数据截图
         time.sleep(5)
+        app.logger.info("开始截图7天的数据,当前产品线为：%s", product_name)
         seven_day_image = page.locator(
             "xpath=//*[@class=\"_3QsyGr2hqAZjVh6fZnzI6t _3wcN4SQOWbN86r7emNH6FU _1PKKo_a_rrd5QsVWTXa1ax\"]").first
         seven_day_image.screenshot(path=path_url + product_dict.get(product_name)[0])
         time.sleep(5)
         # 截图top问题table
+        app.logger.info("开始截图top问题的数据,当前产品为：%s", product_name)
         top_bug_image = page.locator("xpath=/html/body/div/div/div/div[2]/div/div[2]/div[3]")
         top_bug_image.screenshot(path=path_url + product_dict.get(product_name)[1])
 
         ding.dingding_robot_text(product_dict.get(product_name)[2], str(max_dsj), tel_dict.get(product_name),
+                                 [url + product_dict.get(product_name)[0],
+                                  url + product_dict.get(product_name)[1]])
+    elif (datetime.datetime.now().hour == 18 and datetime.datetime.now().minute // 10 == 0):
+        # 切换到7天的数据截图
+        time.sleep(5)
+        app.logger.info("开始截图7天的数据,当前产品线为：%s", product_name)
+        seven_day_image = page.locator(
+            "xpath=//*[@class=\"_3QsyGr2hqAZjVh6fZnzI6t _3wcN4SQOWbN86r7emNH6FU _1PKKo_a_rrd5QsVWTXa1ax\"]").first
+        seven_day_image.screenshot(path=path_url + product_dict.get(product_name)[0])
+        time.sleep(5)
+        # 截图top问题table
+        app.logger.info("开始截图top问题的数据,当前产品为：%s", product_name)
+        top_bug_image = page.locator("xpath=/html/body/div/div/div/div[2]/div/div[2]/div[3]")
+        top_bug_image.screenshot(path=path_url + product_dict.get(product_name)[1])
+
+        ding.dingding_robot_text(product_dict.get(product_name)[2], str(max_dsj), None,
                                  [url + product_dict.get(product_name)[0],
                                   url + product_dict.get(product_name)[1]])
     else:

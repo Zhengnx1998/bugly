@@ -57,7 +57,7 @@ class DingDing:
                         "title": "bugly崩溃告警",
                         "text": "### " + name + "" + text + "\n ![screenshot](" + image_list[
                             0] + ") \n ![screenshot](" +
-                                image_list[1] + ")\n [buglyUrl链接](https://bugly.qq.com/v2/index)\n"
+                                image_list[1] + ")\n [buglyUrl链接](https://bugly.qq.com/v2/workbench/apps)\n"
                                                 " \n  <font color='#3C85C9'> " + str_mobile + " </font> "
                     },
                     "theme": "red",
