@@ -12,12 +12,12 @@ from datetime import datetime
 
 url = "http://47.93.62.235/buglyImage/"
 path_url = "/www/wwwroot/47.93.62.235/buglyImage/"
-product_dict = {"电视家3_0": ["dsj_tv_image.png", "dsj_tv_bug_image.png", "电视家TV端版6小时内最高崩溃率为:"],
+product_dict = {"电视家3_0": ["dsj_tv_image.png", "dsj_tv_bug_image.png", "电视家TV端版6小时内崩溃率最高为:"],
                 "电视家随身版": ["dsj_android_image.png", "dsj_android_bug_image.png",
                                  "电视家Android版6小时内崩溃率最高为:"],
-                "电视家_iOS": ["dsj_ios_image.png", "dsj_ios_bug_image.png", "电视家移动端ios版近6小时内崩溃率最高为:"],
+                "电视家_iOS": ["dsj_ios_image.png", "dsj_ios_bug_image.png", "电视家移动端ios版6小时内崩溃率最高为:"],
                 "Tvmars": ["dsj_huoxing_image.png", "dsj_huoxing_bug_image.png",
-                           "火星近6小时内崩溃率最高为:"]}
+                           "火星6小时内崩溃率最高为:"]}
 tel_dict = {"电视家3_0": ["@18780106625", "@13618035171", "@18380473531", "@19138982495", "@15360584721"],
             "电视家随身版": ["@18780106625", "@15680059975", "@18502828246", "@15669027751"],
             "电视家_iOS": ["@18780106625", "@13076017340", "@18791082880"],
