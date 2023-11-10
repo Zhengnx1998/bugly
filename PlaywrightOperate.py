@@ -5,15 +5,15 @@
 # @File : test.py
 # @Project : bugly_test
 
+import json
 import os.path
 import time
+from datetime import datetime
 
 from playwright.sync_api import sync_playwright
 
 import common
 import dingding
-from datetime import datetime
-import json
 
 
 class PyPage:
@@ -69,7 +69,8 @@ class PyPage:
                 self.app.logger.info("上传登录二维码")
                 qr.screenshot(path='/www/wwwroot/47.93.62.235/buglyImage/qr.png')
                 self.app.logger.info("发送登录二维码")
-                self.ding.dingding_robot("http://47.93.62.235/buglyImage/qr.png"+str(datetime.now().timestamp()))
+                self.ding.dingding_robot(
+                    "http://47.93.62.235/buglyImage/qr.png" + "?" + str(datetime.now().timestamp()))
                 self.app.logger.info("结束二维码登录")
                 self.isLogin = True
                 # 登录成功
@@ -77,23 +78,22 @@ class PyPage:
                 now_product_name = None
                 self.app.logger.info("执行电视家业务动作")
                 now_product_name = common.select_product(self.page, self.app, self.ding, "电视家3_0", now_product_name,
-                                                         0.01)
-                print("now_product_name",now_product_name)
+                                                         0.65)
+                print("now_product_name", now_product_name)
                 time.sleep(5)
                 self.app.logger.info("执行安卓业务动作")
-                now_product_name = common.select_product(self.page, self.app, self.ding, "电视家随身版",now_product_name,
-                                                         0.01)
-                print("now_product_name",now_product_name)
+                now_product_name = common.select_product(self.page, self.app, self.ding, "电视家随身版",
+                                                         now_product_name,
+                                                         0.30)
+                print("now_product_name", now_product_name)
                 time.sleep(5)
                 self.app.logger.info("执行ios业务动作")
                 now_product_name = common.select_product(self.page, self.app, self.ding, "电视家_iOS", now_product_name,
-                                                         0.01)
-                print("now_product_name",now_product_name)
+                                                         5.0)
                 time.sleep(5)
                 self.app.logger.info("执行火星业务动作")
                 common.select_product(self.page, self.app, self.ding, "Tvmars", now_product_name,
-                                      0.01)
-                print("now_product_name",now_product_name)
+                                      0.60)
                 self.context.storage_state(path="state.json")
             else:
                 self.app.logger.info("未登录不执行")

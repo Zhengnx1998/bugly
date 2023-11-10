@@ -4,7 +4,6 @@
 # @Email : znx_969@163.com
 # @File : test.py
 # @Project : bugly_test
-import datetime
 
 import requests
 
@@ -29,26 +28,22 @@ class DingDing:
         print(response.text)
 
     def dingding_robot_text(self, name, text, atMobiles, image_list):
-        str_mobile = ""
-        for mobile in atMobiles:
-            str_mobile = str_mobile + mobile
-        url = 'https://oapi.dingtalk.com/robot/send?access_token=42876cced0f0b2c96af38c1849abb98425733b5beb83a53a0180dc1d3482c0d2'
+        url = 'https://oapi.dingtalk.com/robot/send?access_token=4307e5193748f1b0bc94b08940bab73c5b5d48faa3b8c51ecd8719b3d9e6995e'
         header = {'Content-Type': 'application/json'}
-        if len(image_list) == 1:
+        if atMobiles is None:
             json_data = {
                 "msgtype": "markdown",
                 "markdown": {
                     "title": "bugly崩溃告警",
                     "text": "### " + name + "" + text + "\n ![screenshot](" + image_list[
-                        0] + ")\n [buglyUrl链接](https://bugly.qq.com/v2/workbench/apps)\n"
-                             " \n  <font color=\'#3C85C9\'> " + str_mobile + " </font> "
+                        0] + ") \n ![screenshot](" +
+                            image_list[1] + ")\n [buglyUrl链接](https://bugly.qq.com/v2/workbench/apps)\n"
                 }, "theme": "red",
-                "at": {
-                    "atMobiles": atMobiles,
-                    "isAtAll": False
-                }
             }
         else:
+            str_mobile = ""
+            for mobile in atMobiles:
+                str_mobile = str_mobile + mobile
             json_data = {
                 "msgtype": "markdown",
                 "markdown": {

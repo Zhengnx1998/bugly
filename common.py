@@ -12,16 +12,16 @@ from datetime import datetime
 
 url = "http://47.93.62.235/buglyImage/"
 path_url = "/www/wwwroot/47.93.62.235/buglyImage/"
-product_dict = {"电视家3_0": ["dsj_tv_image.png", "dsj_tv_bug_image.png", "电视家TV端版近6小时最高崩溃率为:"],
+product_dict = {"电视家3_0": ["dsj_tv_image.png", "dsj_tv_bug_image.png", "电视家TV端版6小时内最高崩溃率为:"],
                 "电视家随身版": ["dsj_android_image.png", "dsj_android_bug_image.png",
-                                 "电视家Android近6小时内崩溃率最高为:"],
+                                 "电视家Android版6小时内崩溃率最高为:"],
                 "电视家_iOS": ["dsj_ios_image.png", "dsj_ios_bug_image.png", "电视家移动端ios版近6小时内崩溃率最高为:"],
                 "Tvmars": ["dsj_huoxing_image.png", "dsj_huoxing_bug_image.png",
                            "火星近6小时内崩溃率最高为:"]}
 tel_dict = {"电视家3_0": ["@18780106625", "@13618035171", "@18380473531", "@19138982495", "@15360584721"],
             "电视家随身版": ["@18780106625", "@15680059975", "@18502828246", "@15669027751"],
-            "电视家_iOS": ["@18791082880"],
-            "Tvmars": ["@18791082880"]
+            "电视家_iOS": ["@18780106625", "@13076017340", "@18791082880"],
+            "Tvmars": ["@18380473531", "@18780106625"]
             }
 json_dict = {"电视家3_0": 0, "电视家随身版": 0, "电视家_iOS": 0, "Tvmars": 0}
 
@@ -73,7 +73,7 @@ def check_count(product_name):
     else:
         content_json = json.loads(content)
     count = content_json[product_name]
-    if count == 2:
+    if count == 10:
         return True
     else:
         new_count = count + 1
@@ -112,13 +112,17 @@ def select_product(page, app, ding, product_name, now_product_name, threshold):
         # 发送钉钉
         if check_count(product_name) is False:
             app.logger.info("当天%s达到告警阈值且发送次数没有达到10", product_name)
+            app.logger.info("%s达到阈值%s，即将发送钉钉告警", product_name, threshold)
             ding.dingding_robot_text(product_dict.get(product_name)[2], str(max_dsj), tel_dict.get(product_name),
                                      [url + product_dict.get(product_name)[0] + "?" + str(datetime.now().timestamp()),
                                       url + product_dict.get(product_name)[1] + "?" + str(datetime.now().timestamp())])
+            print(url + product_dict.get(product_name)[0] + "?" + str(datetime.now().timestamp()))
+            print(url + product_dict.get(product_name)[1] + "?" + str(datetime.now().timestamp()))
         else:
             app.logger.info("当天该产品%s已发送次数达到10", product_name)
         # 判断是否当天发送次数达到10
-    elif (datetime.now().hour == 18 and datetime.now().minute // 10 == 5):
+    elif datetime.now().hour == 18 and datetime.now().minute // 10 == 0:
+        app.logger.info("达到每天定点发送时间18:00")
         # 切换到7天的数据截图
         time.sleep(5)
         app.logger.info("开始截图7天的数据,当前产品线为：%s", product_name)
@@ -130,10 +134,13 @@ def select_product(page, app, ding, product_name, now_product_name, threshold):
         app.logger.info("开始截图top问题的数据,当前产品为：%s", product_name)
         top_bug_image = page.locator("xpath=/html/body/div/div/div/div[2]/div/div[2]/div[3]")
         top_bug_image.screenshot(path=path_url + product_dict.get(product_name)[1])
-
+        # 发送钉钉
+        app.logger.info("%s每天告警时间18:00，即将发送钉钉告警", product_name)
         ding.dingding_robot_text(product_dict.get(product_name)[2], str(max_dsj), None,
-                                 [url + product_dict.get(product_name)[0],
-                                  url + product_dict.get(product_name)[1]])
+                                 [url + product_dict.get(product_name)[0] + "?" + str(datetime.now().timestamp()),
+                                  url + product_dict.get(product_name)[1] + "?" + str(datetime.now().timestamp())])
+        print(url + product_dict.get(product_name)[0] + "?" + str(datetime.now().timestamp()))
+        print(url + product_dict.get(product_name)[1] + "?" + str(datetime.now().timestamp()))
     else:
-        app.logger.info("%s小于%s", product_name, threshold)
+        app.logger.info("%s小于%s,且没有到定点发送时间", product_name, threshold)
     return product_name
