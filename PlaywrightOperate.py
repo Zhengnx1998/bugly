@@ -10,6 +10,7 @@ import os.path
 import time
 from datetime import datetime
 
+from fake_useragent import UserAgent
 from playwright.sync_api import sync_playwright
 
 import common
@@ -27,7 +28,6 @@ class PyPage:
         self.isLogin = True
         self.ding = dingding.DingDing(app)
         self.app = app
-        self.init_count()
 
     def init_count(self):
         if datetime.now().hour == 1 and datetime.now().minute // 10 == 0:
@@ -36,14 +36,16 @@ class PyPage:
             file_count.close()
             self.app.logger.info("初始化产品预警次数")
         else:
-            pass
+            self.app.logger.info("未到零点不初始化json文件")
 
     def login_by(self) -> None:
+        self.init_count()
         with sync_playwright() as self.playwright:
             self.browser = self.playwright.chromium.launch(headless=True)
             if os.path.exists("state.json"):
                 self.context = self.browser.new_context(storage_state="state.json",
-                                                        viewport={'width': 2560, 'height': 1660}, locale="zh_CN.utf8")
+                                                        viewport={'width': 2560, 'height': 1660}, locale="zh_CN.utf8",
+                                                        user_agent=UserAgent().chrome)
             else:
                 self.context = self.browser.new_context(
                     viewport={'width': 2560, 'height': 1660}, locale="zh_CN.utf8"
