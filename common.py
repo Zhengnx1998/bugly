@@ -12,12 +12,14 @@ from datetime import datetime
 
 url = "http://47.93.62.235/buglyImage/"
 path_url = "/www/wwwroot/47.93.62.235/buglyImage/"
-product_dict = {"电视家3_0": ["dsj_tv_image.png", "dsj_tv_bug_image.png", "电视家TV端版6小时内崩溃率最高为:"],
+product_dict = {"电视家3_0": ["dsj_tv_image.png", "dsj_tv_bug_image.png", "电视家TV端版当前1小时崩溃率最高为:",
+                              "电视家TV端版当天崩溃率最高为:"],
                 "电视家随身版": ["dsj_android_image.png", "dsj_android_bug_image.png",
-                                 "电视家Android版6小时内崩溃率最高为:"],
-                "电视家_iOS": ["dsj_ios_image.png", "dsj_ios_bug_image.png", "电视家移动端ios版6小时内崩溃率最高为:"],
+                                 "电视家Android版当前1小时崩溃率最高为:", "电视家Android版当天崩溃率最高为:"],
+                "电视家_iOS": ["dsj_ios_image.png", "dsj_ios_bug_image.png", "电视家移动端ios版当前1小时崩溃率最高为:",
+                               "电视家移动端ios版当天崩溃率最高为:"],
                 "Tvmars": ["dsj_huoxing_image.png", "dsj_huoxing_bug_image.png",
-                           "火星6小时内崩溃率最高为:"]}
+                           "火星当前1小时崩溃率最高为:", "火星当天崩溃率最高为:"]}
 tel_dict = {"电视家3_0": ["@18780106625", "@13618035171", "@18380473531", "@19138982495", "@15360584721"],
             "电视家随身版": ["@18780106625", "@15680059975", "@18502828246", "@15669027751"],
             "电视家_iOS": ["@18780106625", "@13076017340", "@18791082880"],
@@ -46,14 +48,24 @@ def json_handle(page, app, product):
             crash = item.get("crashUser") / item.get("accessUser")
             crash_list.append(format(crash * 100, ".2f"))
     print("当天的数据为：", crash_list)
-    if len(crash_list) < 6:
+    if len(crash_list) < 7:
         return 0
-    else:
+    elif len(crash_list) == 7:
         crash_list_six = crash_list[-6:]
-        print("最近6小时的数据为", crash_list_six)
+        print("凌晨0点-6小时的数据为", crash_list_six)
         crash_max = max(crash_list_six)
-        app.logger.info("最近6小时内最大崩溃值是：%s", crash_max)
+        app.logger.info("凌晨0点-6小时的数据为：%s", crash_max)
         return crash_max
+    elif len(crash_list) == 21:
+        regular_list = crash_list
+        print("0-20点的数据为", regular_list)
+        regular_max = max(regular_list)
+        app.logger.info("20：00定时发送全天最高阈值为：%s", regular_max)
+        return regular_max
+    else:
+        last_crash = crash_list[-2]
+        app.logger.info("前1个小时的数据：%s", last_crash)
+        return last_crash
 
 
 # 检查每天发送次数
@@ -96,7 +108,6 @@ def select_product(page, app, ding, product_name, now_product_name, threshold):
     time.sleep(5)
     page.locator("div").filter(has_text=re.compile(r"^今天$")).nth(1).click()
     page.get_by_text("最近7天").click()
-    # 判断崩溃率是否大于阈值或者当前时间=18点0几分
     if float(max_dsj) > threshold:
         # 切换到7天的数据截图
         time.sleep(5)
@@ -121,8 +132,8 @@ def select_product(page, app, ding, product_name, now_product_name, threshold):
         else:
             app.logger.info("当天该产品%s已发送次数达到10", product_name)
         # 判断是否当天发送次数达到10
-    elif datetime.now().hour == 18 and datetime.now().minute // 10 == 0:
-        app.logger.info("达到每天定点发送时间18:00")
+    elif datetime.now().hour == 20 and datetime.now().minute // 10 == 0:
+        app.logger.info("达到每天定点发送时间20:00")
         # 切换到7天的数据截图
         time.sleep(5)
         app.logger.info("开始截图7天的数据,当前产品线为：%s", product_name)
@@ -136,7 +147,7 @@ def select_product(page, app, ding, product_name, now_product_name, threshold):
         top_bug_image.screenshot(path=path_url + product_dict.get(product_name)[1])
         # 发送钉钉
         app.logger.info("%s每天告警时间18:00，即将发送钉钉告警", product_name)
-        ding.dingding_robot_text(product_dict.get(product_name)[2], str(max_dsj), None,
+        ding.dingding_robot_text(product_dict.get(product_name)[3], str(max_dsj), None,
                                  [url + product_dict.get(product_name)[0] + "?" + str(datetime.now().timestamp()),
                                   url + product_dict.get(product_name)[1] + "?" + str(datetime.now().timestamp())])
         print(url + product_dict.get(product_name)[0] + "?" + str(datetime.now().timestamp()))

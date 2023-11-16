@@ -36,7 +36,7 @@ class PyPage:
             file_count.close()
             self.app.logger.info("初始化产品预警次数")
         else:
-            self.app.logger.info("未到零点不初始化json文件")
+            self.app.logger.info("未到1点不初始化json文件")
 
     def login_by(self) -> None:
         self.init_count()
