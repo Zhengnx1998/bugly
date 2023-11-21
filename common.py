@@ -33,7 +33,10 @@ def json_handle(page, app, product):
     page.get_by_text(product).nth(1).click()
     # 拦截get-crash-trend接口
     with page.expect_response("*get-app-real-time-trend*dataType=realTimeTrendData*", timeout=30000) as response_info:
-        page.locator("span").filter(has_text="累计").locator("label").click()
+        if page.locator("span").filter(has_text="累计").locator("label").count() > 0:
+            page.locator("span").filter(has_text="累计").locator("label").click()
+        else:
+            page.screenshot(path="/www/wwwroot/47.93.62.235/buglyImage/common.png", full_page=True)
         print("点击结束")
     response = response_info.value
     print(response.text())
